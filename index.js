@@ -54,7 +54,7 @@ var program = glShader(gl,
 // before they're used in our render function. It's optional
 // for you to keep `update` and `render` as separate steps.
 
-var theta;
+var theta = 0;
 
 function update() {
   // Updates the width/height we use to render the
@@ -102,7 +102,7 @@ function render() {
 
   // Sets the viewport, i.e. tells WebGL to draw the
   // scene across the full canvas.
-  // gl.viewport(0, 0, width, height)
+  gl.viewport(0, 0, width, height)
 
   // Enables depth testing, which prevents triangles
   // from overlapping.
@@ -128,6 +128,8 @@ function render() {
 	quad.bind(program);
   
 	program.uniforms.uSunPos = [0, Math.cos(theta) * 0.3 + 0.2, -1];
+	
+	console.log(program.uniforms.uSunPos);
 	
 	quad.draw();
 }
