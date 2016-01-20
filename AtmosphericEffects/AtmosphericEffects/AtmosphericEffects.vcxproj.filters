@@ -64,5 +64,11 @@
     <None Include="shaders\simple.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="shaders\atmosphere.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\atmosphere.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

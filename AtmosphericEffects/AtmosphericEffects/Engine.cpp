@@ -47,7 +47,7 @@ bool Engine::onInit()
 
 	settings.depthBits = 24;
 	settings.stencilBits = 8;
-	settings.antialiasingLevel = 8;
+	settings.antialiasingLevel = 4;
 	settings.majorVersion = 3;
 	settings.minorVersion = 1;
 	// settings.attributeFlags = sf::ContextSettings::Core;
@@ -152,6 +152,20 @@ bool Engine::onInit()
 	if (!shaders.compile())
 		return false;
 
+	if (!vert.loadFromFile("shaders/atmosphere.vert", Shader::Vertex))
+		return false;
+
+	if (!frag.loadFromFile("shaders/atmosphere.frag", Shader::Fragment))
+		return false;
+
+	atmosphereShaders.create();
+
+	atmosphereShaders.attachShader(vert);
+	atmosphereShaders.attachShader(frag);
+
+	if (!atmosphereShaders.compile())
+		return false;
+
 	modelLoc = shaders.getUniformLocation("model");
 	viewLoc = shaders.getUniformLocation("view");
 	projectionLoc = shaders.getUniformLocation("projection");
@@ -159,6 +173,7 @@ bool Engine::onInit()
 	clock.restart();
 
 	floor = Model::plane(30, 30);
+	floor.rotate(vec3(0, 0, 1), radians(90.f));
 
 	running = true;
 	return true;
@@ -210,7 +225,7 @@ void Engine::onDraw()
 
 	GLint loc = shaders.getUniformLocation("time");
 	
-	shaders.use();
+	atmosphereShaders.use();
 
 	// model = glm::rotate(model, radians(timeValue * 0.1f), glm::vec3(1.0f, 0.0f, 0.0f));
 
@@ -219,6 +234,9 @@ void Engine::onDraw()
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 	glUniform1f(loc, time);
+
+	loc = atmosphereShaders.getUniformLocation("uSunPos");
+	glUniform3f(loc, 0, time, -1);
 
 	floor.draw(modelLoc);
 

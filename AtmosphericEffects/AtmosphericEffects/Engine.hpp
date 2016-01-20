@@ -33,6 +33,8 @@ private:
 	bool wireframe;
 
 	Program shaders;
+	Program atmosphereShaders;
+
 	GLuint VAO, VBO, EBO;
 	GLuint texture;
 
