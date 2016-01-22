@@ -30,10 +30,19 @@ int Engine::execute()
 	if (!onInit())
 		return -1;
 
+	float pTime;
+	float aTime;
+
 	while (running)
 	{
+		pTime = clock.getElapsedTime().asSeconds();
+
 		onUpdate();
 		onDraw();
+
+		aTime = clock.getElapsedTime().asSeconds();
+
+		std::cout << "fps: " << 1 / (aTime - pTime) << std::endl;
 	}
 
 	onExit();
@@ -104,8 +113,6 @@ bool Engine::onInit()
 	{
 		std::cerr << "Error loading texture" << std::endl;
 	}
-
-	/*
 	
 	glGenTextures(1, &texture);
 
@@ -121,20 +128,20 @@ bool Engine::onInit()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.getSize().x, image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
-	glGenerateMipmap(GL_TEXTURE_2D);
+	//glGenerateMipmap(GL_TEXTURE_2D);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-	*/
-	glEnable(GL_CULL_FACE);
+	
+	//glEnable(GL_CULL_FACE);
 
 	glEnable(GL_DEPTH_TEST);
 
 	glViewport(0, 0, width, height);
 
-	camera.create(glm::vec3(0.0f, 0.0f, 0.0f), 5);
+	camera.create();
 
 	view = camera.getView();
-	projection = glm::perspective(glm::radians(75.f), (float)width / (float)height, 0.1f, 100.0f);
+	projection = glm::perspective(glm::radians(75.f), (float)width / (float)height, 0.1f, 1000.0f);
 
 	shaders.create();
 
@@ -173,7 +180,11 @@ bool Engine::onInit()
 	clock.restart();
 
 	floor = Model::plane(30, 30);
-	floor.rotate(vec3(0, 0, 1), radians(90.f));
+	// floor.rotate(vec3(0, 0, 1), radians(90.f));
+
+	// sphere = Model::dome(100, 30, 30);
+
+	atmosphere.create(100.f);
 
 	running = true;
 	return true;
@@ -212,33 +223,45 @@ void Engine::onUpdate()
 		}
 	}
 
+	camera.onUpdate();
+	atmosphere.onUpdate(0.1f);
+
+	camera.setPosition(atmosphere.getSunPosition());
+
 	view = camera.getView();
 }
 
 void Engine::onDraw()
 {
 	float timeValue = clock.getElapsedTime().asSeconds();
-	GLfloat time = (sin(timeValue) / 2) + 0.5;
+	GLfloat time = cos(timeValue) * 0.3 + 0.2;
+
+	// std::cout << time << std::endl;
 
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	GLint loc = shaders.getUniformLocation("time");
+	// GLint loc = shaders.getUniformLocation("time");
 	
-	atmosphereShaders.use();
+	// atmosphereShaders.use();
 
 	// model = glm::rotate(model, radians(timeValue * 0.1f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	// glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+	// glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+	// glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-	glUniform1f(loc, time);
+	// glUniform1f(loc, time);
 
-	loc = atmosphereShaders.getUniformLocation("uSunPos");
-	glUniform3f(loc, 0, time, -1);
+	// GLint loc = atmosphereShaders.getUniformLocation("uSunPos");
+	// glUniform3f(loc, 0, time, -1);
 
+	// glBindTexture(GL_TEXTURE_2D, texture);
 	floor.draw(modelLoc);
+	// sphere.draw(modelLoc);
+
+	atmosphere.setTime(time);
+	atmosphere.draw(view, projection);
 
 	window.display();
 }

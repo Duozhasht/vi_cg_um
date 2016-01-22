@@ -1,5 +1,22 @@
 #version 330 core
 
+/*
+uniform float uPlanetRadius;
+uniform float uAtmosRadius;
+
+uniform vec3 uRhlCoefs;
+uniform float uMieCoef;
+
+uniform float uSunInt;
+uniform vec3 uSunPos;
+uniform vec3 camaraPos;
+
+uniform float uRlhScaleH;
+uniform float uMieScaleH;
+
+uniform float g;
+*/
+
 uniform vec3 uSunPos;
 
 in vec3 vPosition;
@@ -115,7 +132,7 @@ void main()
         normalize(vPosition),           // normalized ray direction
         vec3(0,6372e3,0),               // ray origin
         uSunPos,                        // position of the sun
-        22.0,                           // intensity of the sun
+        60.0,                           // intensity of the sun
         6371e3,                         // radius of the planet in meters
         6471e3,                         // radius of the atmosphere in meters
         vec3(5.5e-6, 13.0e-6, 22.4e-6), // Rayleigh scattering coefficient

@@ -8,6 +8,7 @@
 #include "Camera.hpp"
 
 #include "Model.hpp"
+#include "Atmosphere.hpp"
 
 class Engine
 {
@@ -48,6 +49,9 @@ private:
 
 	Camera camera;
 	Model floor;
+	Model sphere;
+
+	Atmosphere atmosphere;
 };
 
 #endif

@@ -23,6 +23,8 @@ public:
 	static Model trunk(float height, float lRadius, float uRadius, int slices, int stacks);
 	static Model sphere(float radius, int slices, int stacks);
 
+	static Model dome(float radius, int slices, int stacks);
+
 public:
 	Model();
 

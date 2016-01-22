@@ -5,15 +5,14 @@
 
 #include <iostream>
 
-void Camera::create(vec3 t, float r, vec3 c, float y, float p)
+void Camera::create(vec3 pos, vec3 dir, float y, float p)
 {
 	speed = Speed;
 	moveSensitivity = MoveSensitivity;
 	scrollSensitivity = ScrollSensitivity;
-	zoom = 1.0f;
-	target = t;
-	radius = r;
-	center = c;
+	position = pos;
+	front = dir;
+
 	yaw = y;
 	pitch = p;
 
@@ -57,8 +56,10 @@ void Camera::onEvent(const sf::Event& event)
 	{
 		onMouseWheel(event.mouseWheelScroll.delta);
 	}
+	/*
 	if (event.type == sf::Event::KeyPressed)
 	{
+
 		switch (event.key.code)
 		{
 		case sf::Keyboard::W:
@@ -77,17 +78,42 @@ void Camera::onEvent(const sf::Event& event)
 
 		calculate();
 	}
+	*/
+}
+
+void Camera::onUpdate()
+{
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+	{
+		position += moveSensitivity * front;
+		calculate();
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+	{
+		position -= moveSensitivity * front;
+		calculate();
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	{
+		position -= moveSensitivity * right;
+		calculate();
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		position += moveSensitivity * right;
+		calculate();
+	}
 }
 
 mat4 Camera::getView()
 {
-	return glm::lookAt(position + center, target + center, up);
+	return glm::lookAt(position, position + front, up);
 }
 
 void Camera::onMouseMove(int xoffset, int yoffset)
 {
-	yaw += moveSensitivity * (float)xoffset;
-	pitch += moveSensitivity * (float)yoffset;
+	yaw += rotateSensitivity * (float)xoffset;
+	pitch += rotateSensitivity * (float)yoffset;
 
 	glm::clamp(pitch, -glm::half_pi<float>(), glm::half_pi<float>());
 
@@ -103,12 +129,10 @@ void Camera::onMouseWheel(float delta)
 
 void Camera::calculate()
 {
-	position.x = (zoom * radius) * cos(pitch) * sin(yaw);
-	position.y = (zoom * radius) * sin(pitch);
-	position.z = (zoom * radius) * cos(pitch) * cos(yaw);
+	front.x = cos(pitch) * sin(yaw);
+	front.y = sin(pitch);
+	front.z = cos(pitch) * cos(yaw);
 
-	vec3 front = normalize(position - target);
-
-	vec3 right = normalize(cross(front, vec3(0.0f, 1.0f, 0.0f)));
+	right = normalize(cross(front, vec3(0.0f, 1.0f, 0.0f)));
 	up = normalize(cross(right, front));
 }
