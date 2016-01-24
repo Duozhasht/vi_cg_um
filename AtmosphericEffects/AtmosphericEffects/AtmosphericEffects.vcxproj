@@ -162,6 +162,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Atmosphere.hpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Program.hpp" />
     <ClInclude Include="Shader.hpp" />
     <ClInclude Include="Types.hpp" />
+    <ClInclude Include="Utils.hpp" />
     <ClInclude Include="Vertex.hpp" />
   </ItemGroup>
   <ItemGroup>

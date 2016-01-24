@@ -1,8 +1,9 @@
 {
 	"PlanetRadius"		: 6371e3,
 	"AtmosphereRadius"	: 6471e3,
-	"AirRefraction"					: 1.000293,
-	"MolecularDensity"					: 1.225,
+	"RayleighR"			: 5.5e-6,
+	"RayleighG"			: 13.0e-6,
+	"RayleighB"			: 22.4e-6,
 	"MieCoef"			: 21e-6,
 	"SunIntensity"		: 20.0,
 	"RayleighScaleH"	: 8e3,

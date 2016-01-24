@@ -27,6 +27,7 @@ private:
 	void toggleWireframe();
 
 	sf::Clock clock;
+
 	sf::Window window;
 	int width, height;
 

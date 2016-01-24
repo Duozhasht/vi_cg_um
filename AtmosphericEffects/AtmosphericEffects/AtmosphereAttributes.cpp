@@ -59,10 +59,9 @@ bool AtmosphereAttributes::load(const char *json)
 	PlanetRadius	=	doc["PlanetRadius"].GetDouble();
 	AtmosphereRadius =	doc["AtmosphereRadius"].GetDouble();
 
-	n =					doc["AirRefraction"].GetDouble();
-	N =					doc["MolecularDensity"].GetDouble();
-
-	calculateRayleigh();
+	RayleighCoefs.r = doc["RayleighR"].GetDouble();
+	RayleighCoefs.g = doc["RayleighG"].GetDouble();
+	RayleighCoefs.b = doc["RayleighB"].GetDouble();
 
 	MieCoef =			doc["MieCoef"].GetDouble();
 	SunIntensity =		doc["SunIntensity"].GetDouble();
