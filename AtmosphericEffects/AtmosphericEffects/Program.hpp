@@ -22,7 +22,6 @@ public:
 
 	GLint getUniformLocation(const char* uniform);
 
-private:
 	GLuint id;
 };
 

@@ -1,6 +1,7 @@
 #version 330 core
 
-/*
+// Atmosphere Attributes
+
 uniform float uPlanetRadius;
 uniform float uAtmosRadius;
 
@@ -8,14 +9,13 @@ uniform vec3 uRhlCoefs;
 uniform float uMieCoef;
 
 uniform float uSunInt;
-uniform vec3 uSunPos;
-uniform vec3 camaraPos;
 
 uniform float uRlhScaleH;
 uniform float uMieScaleH;
 
-uniform float g;
-*/
+uniform float uG;
+
+// Sun and viewer position
 
 uniform vec3 uSunPos;
 
@@ -132,14 +132,14 @@ void main()
         normalize(vPosition),           // normalized ray direction
         vec3(0,6372e3,0),               // ray origin
         uSunPos,                        // position of the sun
-        60.0,                           // intensity of the sun
-        6371e3,                         // radius of the planet in meters
-        6471e3,                         // radius of the atmosphere in meters
-        vec3(5.5e-6, 13.0e-6, 22.4e-6), // Rayleigh scattering coefficient
-        21e-6,                          // Mie scattering coefficient
-        8e3,                            // Rayleigh scale height
-        1.2e3,                          // Mie scale height
-        0.758                           // Mie preferred scattering direction
+        uSunInt,                           // intensity of the sun
+        uPlanetRadius,                         // radius of the planet in meters
+        uAtmosRadius,                         // radius of the atmosphere in meters
+        uRhlCoefs, // Rayleigh scattering coefficient
+        uMieCoef,                          // Mie scattering coefficient
+        uRlhScaleH,                            // Rayleigh scale height
+        uMieScaleH,                          // Mie scale height
+        uG                           // Mie preferred scattering direction
     );
 
     // Apply exposure.

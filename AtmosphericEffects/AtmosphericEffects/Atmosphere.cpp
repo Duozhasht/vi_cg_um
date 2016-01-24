@@ -7,7 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/polar_coordinates.hpp>
 
-const char* Atmosphere::AttributeNames[] = { "uPlanetRadius", "uAtmosRadius", "uRhlCoefs", "uMieCoef", "uSunInt", "uSunPos", "uRlhScaleH", "uMieScaleH", "g" };
+const char* Atmosphere::AttributeNames[] = { "uPlanetRadius", "uAtmosRadius", "uRhlCoefs", "uMieCoef", "uSunInt", "uRlhScaleH", "uMieScaleH", "uG" };
 
 Atmosphere::Atmosphere()
 {
@@ -32,12 +32,28 @@ bool Atmosphere::create(float r)
 	if(!shaders.compile())
 		return false;
 
-	/*
+	if (!attributes.load("config/atts.json"))
+		return false;
+
 	for (int i = PlanetRadius; i < TotalAttributes; ++i)
 	{
 		lAttributes[i] = shaders.getUniformLocation(AttributeNames[i]);
 	}
-	*/
+
+	glUseProgram(shaders.id);
+
+	glUniform1f(lAttributes[PlanetRadius], attributes.PlanetRadius);
+	glUniform1f(lAttributes[AtmosphereRadius], attributes.AtmosphereRadius);
+	glUniform3f(lAttributes[RayleighCoefs], attributes.RayleighCoefs.r, attributes.RayleighCoefs.g, attributes.RayleighCoefs.b);
+
+	glUniform1f(lAttributes[MieCoef], attributes.MieCoef);
+	glUniform1f(lAttributes[SunIntensity], attributes.SunIntensity);
+
+	glUniform1f(lAttributes[RayleighScaleH], attributes.RayleighScaleH);
+	glUniform1f(lAttributes[MieScaleH], attributes.MieScaleH);
+	glUniform1f(lAttributes[G], attributes.G);
+
+	glUseProgram(0);
 
 	lSunPosition = shaders.getUniformLocation("uSunPos");
 
@@ -65,7 +81,7 @@ void Atmosphere::onUpdate(float t)
 
 void Atmosphere::draw(mat4 &view, mat4& projection)
 {
-	shaders.use();
+	glUseProgram(shaders.id);
 
 	glUniformMatrix4fv(lView, 1, GL_FALSE, glm::value_ptr(view));
 	glUniformMatrix4fv(lProjection, 1, GL_FALSE, glm::value_ptr(projection));
@@ -76,6 +92,8 @@ void Atmosphere::draw(mat4 &view, mat4& projection)
 	//sun.draw(lModel);
 
 	// surface.draw(lModel);
+
+	glUseProgram(0);
 }
 
 void Atmosphere::onResize(int newWidth, int newHeight)

@@ -3,6 +3,7 @@
 
 #include "Program.hpp"
 #include "Model.hpp"
+#include "AtmosphereAttributes.hpp"
 
 class Atmosphere
 {
@@ -14,7 +15,6 @@ private:
 		RayleighCoefs,
 		MieCoef,
 		SunIntensity,
-		SunPosition,
 		RayleighScaleH,
 		MieScaleH,
 		G,
@@ -27,6 +27,7 @@ public:
 	Atmosphere();
 
 	bool create(float radius);
+	bool loadAttributes(const char *file);
 	void onResize(int newWidth, int newHeight);
 	void onUpdate(float t);
 
@@ -38,6 +39,7 @@ public:
 
 private:
 	GLint lAttributes[TotalAttributes];
+	AtmosphereAttributes attributes;
 
 	Program shaders;
 
