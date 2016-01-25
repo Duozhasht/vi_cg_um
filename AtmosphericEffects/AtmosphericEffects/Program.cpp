@@ -9,6 +9,24 @@ Program::Program()
 	
 }
 
+bool Program::load(const char *vertexS, const char *fragmentS)
+{
+	create();
+
+	Shader vert, frag;
+
+	if (!vert.loadFromFile(vertexS, Shader::Vertex))
+		return false;
+
+	if (!frag.loadFromFile(fragmentS, Shader::Fragment))
+		return false;
+
+	attachShader(vert);
+	attachShader(frag);
+
+	return compile();
+}
+
 void Program::create()
 {
 	id = glCreateProgram();

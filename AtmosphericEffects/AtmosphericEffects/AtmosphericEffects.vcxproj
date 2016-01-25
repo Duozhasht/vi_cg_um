@@ -177,8 +177,11 @@
     <ClInclude Include="Vertex.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="config\atts.json" />
     <None Include="shaders\atmosphere.frag" />
     <None Include="shaders\atmosphere.vert" />
+    <None Include="shaders\ground.frag" />
+    <None Include="shaders\ground.vert" />
     <None Include="shaders\simple.frag" />
     <None Include="shaders\simple.vert" />
   </ItemGroup>

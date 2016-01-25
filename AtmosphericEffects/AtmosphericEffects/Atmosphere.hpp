@@ -11,7 +11,7 @@ private:
 	enum Attribute
 	{
 		PlanetRadius,
-		AtmosphereRadius,
+		AtmosphereHeight,
 		RayleighCoefs,
 		MieCoef,
 		SunIntensity,
@@ -38,10 +38,13 @@ public:
 	void onDelete();
 
 private:
+	void setUniformAttributes();
+
 	GLint lAttributes[TotalAttributes];
 	AtmosphereAttributes attributes;
 
-	Program shaders;
+	Program skyShaders;
+	Program groundShaders;
 
 	float time;
 
@@ -51,9 +54,11 @@ private:
 	vec3 sunPosition;
 	GLint lSunPosition;
 
-	GLint lModel;
-	GLint lView;
-	GLint lProjection;
+	GLint lModelS, lModelG;
+	GLint lViewS, lViewG;
+	GLint lProjectionS, lProjectionG;
+
+	GLuint texture;
 
 	Model sun;
 	Model skyDome;

@@ -10,10 +10,10 @@
 #include "rapidjson\error\error.h"
 #include "rapidjson\error\en.h"
 
-AtmosphereAttributes::AtmosphereAttributes(float pr, float ar, vec3 rlh, float mie, float sunI, float rlhSh, float mieSh, float g)
+AtmosphereAttributes::AtmosphereAttributes(float pr, float ah, vec3 rlh, float mie, float sunI, float rlhSh, float mieSh, float g)
 	:
 	PlanetRadius(pr),
-	AtmosphereRadius(ar),
+	AtmosphereHeight(ah),
 	RayleighCoefs(rlh),
 	MieCoef(mie),
 	SunIntensity(sunI),
@@ -57,7 +57,7 @@ bool AtmosphereAttributes::load(const char *json)
 	}
 
 	PlanetRadius	=	doc["PlanetRadius"].GetDouble();
-	AtmosphereRadius =	doc["AtmosphereRadius"].GetDouble();
+	AtmosphereHeight =	doc["AtmosphereHeight"].GetDouble();
 
 	RayleighCoefs.r = doc["RayleighR"].GetDouble();
 	RayleighCoefs.g = doc["RayleighG"].GetDouble();
@@ -68,6 +68,8 @@ bool AtmosphereAttributes::load(const char *json)
 	RayleighScaleH =	doc["RayleighScaleH"].GetDouble();
 	MieScaleH =			doc["MieScaleH"].GetDouble();
 	G = 				doc["G"].GetDouble();
+
+	return true;
 }
 
 void AtmosphereAttributes::calculateRayleigh()

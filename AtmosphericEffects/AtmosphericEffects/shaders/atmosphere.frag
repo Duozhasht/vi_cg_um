@@ -3,7 +3,7 @@
 // Atmosphere Attributes
 
 uniform float uPlanetRadius;
-uniform float uAtmosRadius;
+uniform float uAtmosHeight;
 
 uniform vec3 uRhlCoefs;
 uniform float uMieCoef;
@@ -130,11 +130,11 @@ void main()
 {
     vec3 colorA = atmosphere(
         normalize(vPosition),           // normalized ray direction
-        vec3(0,6372e3,0),               // ray origin
+        vec3(0,uPlanetRadius + 1, 0),               // ray origin
         uSunPos,                        // position of the sun
         uSunInt,                           // intensity of the sun
         uPlanetRadius,                         // radius of the planet in meters
-        uAtmosRadius,                         // radius of the atmosphere in meters
+        uPlanetRadius + uAtmosHeight,                         // radius of the atmosphere in meters
         uRhlCoefs, // Rayleigh scattering coefficient
         uMieCoef,                          // Mie scattering coefficient
         uRlhScaleH,                            // Rayleigh scale height
@@ -143,7 +143,7 @@ void main()
     );
 
     // Apply exposure.
-    colorA = 1.0 - exp(-1.0 * colorA);
+    colorA = 1 - exp(-0.6 * colorA);
 
     color = vec4(colorA, 1);
 }

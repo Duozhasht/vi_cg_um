@@ -5,13 +5,12 @@
 
 #include <iostream>
 
-void Camera::create(vec3 pos, vec3 dir, float y, float p)
+void Camera::create(vec3 pos, float y, float p)
 {
 	speed = Speed;
 	moveSensitivity = MoveSensitivity;
 	scrollSensitivity = ScrollSensitivity;
 	position = pos;
-	front = dir;
 
 	yaw = y;
 	pitch = p;
@@ -46,7 +45,7 @@ void Camera::onEvent(const sf::Event& event)
 		if (toggled)
 		{
 			onMouseMove(lastX - mx, lastY - my);
-			// std::cout << "Mouse Move" << std::endl;
+			std::cout << "Yaw " << yaw << std::endl;
 		}
 
 		lastX = mx;

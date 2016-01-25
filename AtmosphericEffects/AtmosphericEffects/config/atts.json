@@ -1,12 +1,12 @@
 {
 	"PlanetRadius"		: 6371e3,
-	"AtmosphereRadius"	: 6471e3,
+	"AtmosphereHeight"	: 17e3,
 	"RayleighR"			: 5.5e-6,
 	"RayleighG"			: 13.0e-6,
 	"RayleighB"			: 22.4e-6,
 	"MieCoef"			: 21e-6,
-	"SunIntensity"		: 20.0,
-	"RayleighScaleH"	: 8e3,
+	"SunIntensity"		: 30.0,
+	"RayleighScaleH"	: 7.994e3,
 	"MieScaleH"			: 1.2e3,
-	"G"					: 0.78
+	"G"					: 0.76
 }

@@ -72,31 +72,6 @@ bool Engine::onInit()
 		std::cout << "Failed to initialize GLEW" << std::endl;
 		return false;
 	}
-
-	sf::Image image;
-
-	if (!image.loadFromFile("bricks.jpg"))
-	{
-		std::cerr << "Error loading texture" << std::endl;
-	}
-	
-	glGenTextures(1, &texture);
-
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.getSize().x, image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
-	//glGenerateMipmap(GL_TEXTURE_2D);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
 	
 	glEnable(GL_CULL_FACE);
 
@@ -104,7 +79,7 @@ bool Engine::onInit()
 
 	glViewport(0, 0, width, height);
 
-	camera.create();
+	camera.create(vec3(0.0f, 2.0f, 0.0f));
 
 	view = camera.getView();
 	projection = glm::perspective(glm::radians(75.f), (float)width / (float)height, 0.1f, 1000.0f);
@@ -150,7 +125,7 @@ bool Engine::onInit()
 
 	// sphere = Model::dome(100, 30, 30);
 
-	atmosphere.create(100.f);
+	atmosphere.create(300.f);
 
 	running = true;
 	return true;
@@ -190,9 +165,9 @@ void Engine::onUpdate()
 	}
 
 	camera.onUpdate();
-	atmosphere.onUpdate(0.1f);
+	atmosphere.onUpdate(0.2f);
 
-	camera.setPosition(atmosphere.getSunPosition());
+	// camera.setPosition(atmosphere.getSunPosition());
 
 	view = camera.getView();
 }

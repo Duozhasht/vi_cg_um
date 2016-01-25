@@ -88,5 +88,14 @@
     <None Include="shaders\atmosphere.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="config\atts.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\ground.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\ground.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

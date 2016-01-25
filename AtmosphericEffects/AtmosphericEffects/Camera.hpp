@@ -31,7 +31,7 @@ public:
 		toggled = false;
 	}
 
-	void create(vec3 pos = vec3(0.0f, 0.0f, 0.0f), vec3 dir = vec3(0.f, 0.f, 1.0f), float y = Yaw, float p = Pitch);
+	void create(vec3 pos = vec3(0.0f, 0.0f, 0.0f), float y = Yaw, float p = Pitch);
 	void onEvent(const sf::Event& event);
 	void onUpdate();
 

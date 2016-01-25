@@ -11,6 +11,7 @@ public:
 	Program();
 
 	void create();
+	bool load(const char *vertexS, const char *fragmentS);
 
 	void attachShader(const Shader& s);
 	bool compile();

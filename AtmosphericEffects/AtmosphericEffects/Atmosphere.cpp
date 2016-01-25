@@ -7,43 +7,31 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/polar_coordinates.hpp>
 
-const char* Atmosphere::AttributeNames[] = { "uPlanetRadius", "uAtmosRadius", "uRhlCoefs", "uMieCoef", "uSunInt", "uRlhScaleH", "uMieScaleH", "uG" };
+#include <SFML/Graphics.hpp>
+
+const char* Atmosphere::AttributeNames[] = { "uPlanetRadius", "uAtmosHeight", "uRhlCoefs", "uMieCoef", "uSunInt", "uRlhScaleH", "uMieScaleH", "uG" };
 
 Atmosphere::Atmosphere()
 {
 	
 }
 
-bool Atmosphere::create(float r)
+bool Atmosphere::loadAttributes(const char *file)
 {
-	shaders.create();
-
-	Shader vert, frag;
-
-	if (!vert.loadFromFile("shaders/atmosphere.vert", Shader::Vertex))
-		return false;
-
-	if (!frag.loadFromFile("shaders/atmosphere.frag", Shader::Fragment))
-		return false;
-
-	shaders.attachShader(vert);
-	shaders.attachShader(frag);
-
-	if(!shaders.compile())
-		return false;
-
 	if (!attributes.load("config/atts.json"))
 		return false;
 
-	for (int i = PlanetRadius; i < TotalAttributes; ++i)
-	{
-		lAttributes[i] = shaders.getUniformLocation(AttributeNames[i]);
-	}
+	setUniformAttributes();
 
-	glUseProgram(shaders.id);
+	return true;
+}
+
+void Atmosphere::setUniformAttributes()
+{
+	glUseProgram(skyShaders.id);
 
 	glUniform1f(lAttributes[PlanetRadius], attributes.PlanetRadius);
-	glUniform1f(lAttributes[AtmosphereRadius], attributes.AtmosphereRadius);
+	glUniform1f(lAttributes[AtmosphereHeight], attributes.AtmosphereHeight);
 	glUniform3f(lAttributes[RayleighCoefs], attributes.RayleighCoefs.r, attributes.RayleighCoefs.g, attributes.RayleighCoefs.b);
 
 	glUniform1f(lAttributes[MieCoef], attributes.MieCoef);
@@ -54,18 +42,70 @@ bool Atmosphere::create(float r)
 	glUniform1f(lAttributes[G], attributes.G);
 
 	glUseProgram(0);
+}
 
-	lSunPosition = shaders.getUniformLocation("uSunPos");
 
-	lModel = shaders.getUniformLocation("model");
-	lView = shaders.getUniformLocation("view");
-	lProjection = shaders.getUniformLocation("projection");
+bool Atmosphere::create(float r)
+{
+	if(!skyShaders.load("shaders/atmosphere.vert", "shaders/atmosphere.frag"))
+		return false;
+
+	for (int i = PlanetRadius; i < TotalAttributes; ++i)
+	{
+		lAttributes[i] = skyShaders.getUniformLocation(AttributeNames[i]);
+	}
+
+	if(!loadAttributes("config/atts.json"))
+		return false;
+
+	lSunPosition = skyShaders.getUniformLocation("uSunPos");
+
+	lModelS = skyShaders.getUniformLocation("model");
+	lViewS = skyShaders.getUniformLocation("view");
+	lProjectionS = skyShaders.getUniformLocation("projection");
+
+	if (!groundShaders.load("shaders/simple.vert", "shaders/simple.frag"))
+		return false;
+
+	lModelG = groundShaders.getUniformLocation("model");
+	lViewG = groundShaders.getUniformLocation("view");
+	lProjectionG = groundShaders.getUniformLocation("projection");
+
+	sf::Image image;
+
+	if (!image.loadFromFile("dirt.png"))
+	{
+		std::cerr << "Error loading texture" << std::endl;
+	}
+
+
+	glGenTextures(1, &texture);
+
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.getSize().x, image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	lModelG = groundShaders.getUniformLocation("model");
+	lViewG = groundShaders.getUniformLocation("view");
+	lProjectionG = groundShaders.getUniformLocation("projection");
 
 	sunPolar = vec2(0.0f, 0.0f);
 	radius = r;
 
-	skyDome = Model::dome(radius, 50, 50);
-	surface = Model::plane(2 * radius, 50.f);
+	skyDome = Model::dome(radius, 100, 100);
+	surface = Model::plane(2 * radius, 2 * radius);
 
 	sun = Model::sphere(1, 10.f, 10.f);
 
@@ -81,19 +121,35 @@ void Atmosphere::onUpdate(float t)
 
 void Atmosphere::draw(mat4 &view, mat4& projection)
 {
-	glUseProgram(shaders.id);
+	glUseProgram(skyShaders.id);
 
-	glUniformMatrix4fv(lView, 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(lProjection, 1, GL_FALSE, glm::value_ptr(projection));
+	glUniformMatrix4fv(lViewS, 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(lProjectionS, 1, GL_FALSE, glm::value_ptr(projection));
 	
 	glUniform3f(lSunPosition, sunPosition.x, sunPosition.y, sunPosition.z);
 
-	skyDome.draw(lModel);
+	skyDome.draw(lModelS);
+
+	glUseProgram(0);
+
+	glUseProgram(groundShaders.id);
+
+	glUniformMatrix4fv(lViewG, 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(lProjectionG, 1, GL_FALSE, glm::value_ptr(projection));
+
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	surface.draw(lModelG);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glUseProgram(0);
+
 	//sun.draw(lModel);
 
 	// surface.draw(lModel);
 
-	glUseProgram(0);
+	
 }
 
 void Atmosphere::onResize(int newWidth, int newHeight)
