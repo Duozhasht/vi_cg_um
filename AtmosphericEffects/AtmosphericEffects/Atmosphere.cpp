@@ -101,7 +101,7 @@ bool Atmosphere::create(float r)
 	lViewG = groundShaders.getUniformLocation("view");
 	lProjectionG = groundShaders.getUniformLocation("projection");
 
-	sunPolar = vec2(0.0f, 0.0f);
+	sunPolar = vec2(-0.4f, 0.0f);
 	radius = r;
 
 	skyDome = Model::dome(radius, 100, 100);

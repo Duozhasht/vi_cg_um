@@ -45,7 +45,6 @@ void Camera::onEvent(const sf::Event& event)
 		if (toggled)
 		{
 			onMouseMove(lastX - mx, lastY - my);
-			std::cout << "Yaw " << yaw << std::endl;
 		}
 
 		lastX = mx;

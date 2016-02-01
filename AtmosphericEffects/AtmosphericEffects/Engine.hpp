@@ -53,6 +53,8 @@ private:
 	Model sphere;
 
 	Atmosphere atmosphere;
+	float time;
+	bool displayFps;
 };
 
 #endif

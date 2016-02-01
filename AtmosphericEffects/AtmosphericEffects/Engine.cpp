@@ -1,6 +1,7 @@
 #include "Engine.hpp"
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 
 #define GLEW_STATIC
@@ -17,7 +18,7 @@
 #include "Utils.hpp"
 
 Engine::Engine()
-	: width(800), height(600), running(false), wireframe(false)
+	: width(800), height(600), running(false), wireframe(false), time(1.0f), displayFps(false)
 {
 
 }
@@ -35,16 +36,19 @@ int Engine::execute()
 	float pTime;
 	float aTime;
 
+	float fps;
 	while (running)
 	{
-		pTime = clock.getElapsedTime().asMilliseconds();
+		pTime = clock.getElapsedTime().asSeconds();
 
 		onUpdate();
 		onDraw();
 
-		aTime = clock.getElapsedTime().asMilliseconds();
+		aTime = clock.getElapsedTime().asSeconds();
 
-		std::cout << "fps: " << FrameCounter::getFps(aTime - pTime) << std::endl;
+		fps = FrameCounter::getFps(aTime - pTime);
+		if(displayFps)
+			std::cout << "fps: " << fps << std::endl;
 	}
 
 	onExit();
@@ -73,7 +77,7 @@ bool Engine::onInit()
 		return false;
 	}
 	
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -147,14 +151,22 @@ void Engine::onUpdate()
 		{
 			glViewport(0, 0, event.size.width, event.size.height);
 		}
-		else if (event.type == sf::Event::KeyReleased)
+		else if (event.type == sf::Event::KeyPressed)
 		{
 			switch (event.key.code)
 			{
+			case sf::Keyboard::Add:
+				time += 0.2f;
+				std::cout << "Time factor: " << std::fixed << std::setprecision(2) << time << std::endl;
+				break;
+			case sf::Keyboard::Subtract:
+				time -= 0.2f;
+				std::cout << "Time factor: " << std::fixed << std::setprecision(2) << time << std::endl;
+				break;
 			case sf::Keyboard::R:
 				break;
 			case sf::Keyboard::F:
-				floor.rotate(vec3(0.f, 1.f, 0.f), 25.f);
+				displayFps = !displayFps;
 				break;
 			case sf::Keyboard::M:
 				toggleWireframe();
@@ -165,7 +177,7 @@ void Engine::onUpdate()
 	}
 
 	camera.onUpdate();
-	atmosphere.onUpdate(0.2f);
+	atmosphere.onUpdate(time * 0.15f);
 
 	// camera.setPosition(atmosphere.getSunPosition());
 

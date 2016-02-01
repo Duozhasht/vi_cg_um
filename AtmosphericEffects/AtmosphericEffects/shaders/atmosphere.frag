@@ -25,8 +25,8 @@ in vec3 vColor;
 out vec4 color;
 
 #define PI 3.141592
-#define iSteps 8
-#define jSteps 4
+#define iSteps 16
+#define jSteps 8
 
 float rsi(vec3 r0, vec3 rd, float sr)
 {
