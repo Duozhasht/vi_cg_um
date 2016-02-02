@@ -54,29 +54,6 @@ void Camera::onEvent(const sf::Event& event)
 	{
 		onMouseWheel(event.mouseWheelScroll.delta);
 	}
-	/*
-	if (event.type == sf::Event::KeyPressed)
-	{
-
-		switch (event.key.code)
-		{
-		case sf::Keyboard::W:
-			center.y += 0.1f;
-			break;
-		case sf::Keyboard::S:
-			center.y -= 0.1f;
-			break;
-		case sf::Keyboard::A:
-			center.x -= 0.1f;
-			break;
-		case sf::Keyboard::D:
-			center.x += 0.1f;
-			break;
-		}
-
-		calculate();
-	}
-	*/
 }
 
 void Camera::onUpdate()

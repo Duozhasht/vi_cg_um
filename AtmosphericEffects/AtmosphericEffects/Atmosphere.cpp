@@ -58,7 +58,7 @@ bool Atmosphere::create(float r)
 	if(!loadAttributes("config/atts.json"))
 		return false;
 
-	lSunPosition = skyShaders.getUniformLocation("uSunPos");
+	lSunPositionS = skyShaders.getUniformLocation("uSunPos");
 
 	lModelS = skyShaders.getUniformLocation("model");
 	lViewS = skyShaders.getUniformLocation("view");
@@ -67,21 +67,49 @@ bool Atmosphere::create(float r)
 	if (!groundShaders.load("shaders/simple.vert", "shaders/simple.frag"))
 		return false;
 
+	lSunPositionG = groundShaders.getUniformLocation("uSunPos");
 	lModelG = groundShaders.getUniformLocation("model");
 	lViewG = groundShaders.getUniformLocation("view");
 	lProjectionG = groundShaders.getUniformLocation("projection");
 
 	sf::Image image;
 
-	if (!image.loadFromFile("dirt.png"))
+	if (!image.loadFromFile("sand.jpg"))
 	{
 		std::cerr << "Error loading texture" << std::endl;
 	}
 
+	GLfloat largest;
+	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &largest);
 
-	glGenTextures(1, &texture);
+	glGenTextures(1, &surfaceTex);
 
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindTexture(GL_TEXTURE_2D, surfaceTex);
+	
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, largest);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.getSize().x, image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	if (!image.loadFromFile("stars.jpg"))
+	{
+		std::cerr << "Error loading texture" << std::endl;
+	}
+
+	glGenTextures(1, &starsTex);
+
+	glBindTexture(GL_TEXTURE_2D, starsTex);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -122,22 +150,25 @@ void Atmosphere::onUpdate(float t)
 void Atmosphere::draw(mat4 &view, mat4& projection)
 {
 	glUseProgram(skyShaders.id);
+	glBindTexture(GL_TEXTURE_2D, starsTex);
 
 	glUniformMatrix4fv(lViewS, 1, GL_FALSE, glm::value_ptr(view));
 	glUniformMatrix4fv(lProjectionS, 1, GL_FALSE, glm::value_ptr(projection));
 	
-	glUniform3f(lSunPosition, sunPosition.x, sunPosition.y, sunPosition.z);
+	glUniform3f(lSunPositionS, sunPosition.x, sunPosition.y, sunPosition.z);
 
 	skyDome.draw(lModelS);
 
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);
 
 	glUseProgram(groundShaders.id);
+	glUniform3f(lSunPositionG, sunPosition.x, sunPosition.y, sunPosition.z);
 
 	glUniformMatrix4fv(lViewG, 1, GL_FALSE, glm::value_ptr(view));
 	glUniformMatrix4fv(lProjectionG, 1, GL_FALSE, glm::value_ptr(projection));
 
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindTexture(GL_TEXTURE_2D, surfaceTex);
 
 	surface.draw(lModelG);
 

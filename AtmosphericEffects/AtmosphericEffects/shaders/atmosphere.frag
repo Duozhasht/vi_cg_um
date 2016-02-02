@@ -18,9 +18,11 @@ uniform float uG;
 // Sun and viewer position
 
 uniform vec3 uSunPos;
+uniform sampler2D tex;
 
 in vec3 vPosition;
 in vec3 vColor;
+in vec2 vTexCoord;
 
 out vec4 color;
 
@@ -145,5 +147,9 @@ void main()
     // Apply exposure.
     colorA = 1 - exp(-0.6 * colorA);
 
-    color = vec4(colorA, 1);
+	vec3 pSun = normalize(uSunPos);
+
+	float intensity = smoothstep(-0.15, 0.15, dot(-pSun, vec3(0, 1, 0)));
+
+    color = vec4(colorA, 1) + intensity * texture(tex, vTexCoord);
 }

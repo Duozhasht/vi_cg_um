@@ -7,7 +7,7 @@
 
 class Atmosphere
 {
-private:
+public:
 	enum Attribute
 	{
 		PlanetRadius,
@@ -31,7 +31,6 @@ public:
 	void onResize(int newWidth, int newHeight);
 	void onUpdate(float t);
 
-	void setTime(float t) { time = t; }
 	vec3 getSunPosition() { return sunPosition; }
 
 	void draw(mat4 &view, mat4& projection);
@@ -46,19 +45,19 @@ private:
 	Program skyShaders;
 	Program groundShaders;
 
-	float time;
-
 	vec2 sunPolar;
 	float radius;
 
 	vec3 sunPosition;
-	GLint lSunPosition;
+	GLint lSunPositionS;
+	GLint lSunPositionG;
 
 	GLint lModelS, lModelG;
 	GLint lViewS, lViewG;
 	GLint lProjectionS, lProjectionG;
 
-	GLuint texture;
+	GLuint surfaceTex;
+	GLuint starsTex;
 
 	Model sun;
 	Model skyDome;

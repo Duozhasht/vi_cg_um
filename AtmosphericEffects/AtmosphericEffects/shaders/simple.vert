@@ -8,12 +8,19 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-out vec3 vColor;
+uniform vec3 uSunPos;
+
+out vec3 vNormal;
 out vec2 vTexCoord;
+
+out vec3 vLightDir;
 
 void main()
 {
     gl_Position = projection * view * model * vec4(position, 1.0);
-	vColor = normal;
+
+	vNormal = normal;
 	vTexCoord = texCoord;
+
+	vLightDir = normalize (uSunPos);
 }

@@ -74,6 +74,9 @@
     <ClInclude Include="Utils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Slider.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\simple.frag">
@@ -89,12 +92,6 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="config\atts.json">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaders\ground.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaders\ground.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

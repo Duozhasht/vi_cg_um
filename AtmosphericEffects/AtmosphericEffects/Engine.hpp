@@ -10,6 +10,8 @@
 #include "Model.hpp"
 #include "Atmosphere.hpp"
 
+#include "Slider.hpp"
+
 class Engine
 {
 public:
@@ -25,6 +27,7 @@ private:
 	void onExit();
 
 	void toggleWireframe();
+	void toggleAerial();
 
 	sf::Clock clock;
 
@@ -53,8 +56,11 @@ private:
 	Model sphere;
 
 	Atmosphere atmosphere;
+	Slider attribute[Atmosphere::TotalAttributes];
+
 	float time;
 	bool displayFps;
+	bool aerial;
 };
 
 #endif
