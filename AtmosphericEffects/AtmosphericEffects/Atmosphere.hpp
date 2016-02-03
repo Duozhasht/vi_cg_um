@@ -28,13 +28,11 @@ public:
 
 	bool create(float radius);
 	bool loadAttributes(const char *file);
-	void onResize(int newWidth, int newHeight);
 	void onUpdate(float t);
 
 	vec3 getSunPosition() { return sunPosition; }
 
 	void draw(mat4 &view, mat4& projection);
-	void onDelete();
 
 private:
 	void setUniformAttributes();

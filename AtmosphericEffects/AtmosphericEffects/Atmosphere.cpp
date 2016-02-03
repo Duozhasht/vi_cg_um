@@ -182,13 +182,3 @@ void Atmosphere::draw(mat4 &view, mat4& projection)
 
 	
 }
-
-void Atmosphere::onResize(int newWidth, int newHeight)
-{
-
-}
-
-void Atmosphere::onDelete()
-{
-	
-}

@@ -14,6 +14,10 @@
 
 class Engine
 {
+	const char* WindowTitle = "Atmosphere";
+	const int DefaultWidth = 800;
+	const int DefaultHeight = 600;
+
 public:
 	Engine();
 	~Engine();
@@ -28,10 +32,12 @@ private:
 
 	void toggleWireframe();
 	void toggleAerial();
+	void toggleFullScreen();
 
 	sf::Clock clock;
 
 	sf::Window window;
+	sf::ContextSettings settings;
 	int width, height;
 
 	bool running;
@@ -39,9 +45,6 @@ private:
 
 	Program shaders;
 	Program atmosphereShaders;
-
-	GLuint VAO, VBO, EBO;
-	GLuint texture;
 
 	mat4 model;
 	mat4 view;
@@ -59,6 +62,7 @@ private:
 	Slider attribute[Atmosphere::TotalAttributes];
 
 	float time;
+	bool fullscreen;
 	bool displayFps;
 	bool aerial;
 };

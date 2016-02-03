@@ -18,9 +18,8 @@
 #include "Utils.hpp"
 
 Engine::Engine()
-	: width(800), height(600), running(false), wireframe(false), time(1.0f), displayFps(false), aerial(false)
+	: width(DefaultWidth), height(DefaultHeight), running(false), wireframe(false), time(1.0f), fullscreen(false), displayFps(false), aerial(false)
 {
-
 }
 
 Engine::~Engine()
@@ -58,8 +57,6 @@ int Engine::execute()
 
 bool Engine::onInit()
 {
-	sf::ContextSettings settings;
-
 	settings.depthBits = 24;
 	settings.stencilBits = 8;
 	settings.antialiasingLevel = 4;
@@ -67,7 +64,7 @@ bool Engine::onInit()
 	settings.minorVersion = 1;
 	// settings.attributeFlags = sf::ContextSettings::Core;
 
-	window.create(sf::VideoMode(width, height), "OpenGL", sf::Style::Default, settings);
+	window.create(sf::VideoMode(DefaultWidth, DefaultHeight), WindowTitle, sf::Style::Default, settings);
 	window.setVerticalSyncEnabled(true);
 
 	glewExperimental = GL_TRUE;
@@ -77,8 +74,7 @@ bool Engine::onInit()
 		return false;
 	}
 	
-	//glEnable(GL_CULL_FACE);
-
+	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 
 	glViewport(0, 0, width, height);
@@ -110,12 +106,24 @@ void Engine::onUpdate()
 		}
 		else if (event.type == sf::Event::Resized)
 		{
+			width = event.size.width;
+			height = event.size.height;
+
+			projection = glm::perspective(glm::radians(75.f), (float)width / (float)height, 0.1f, 1000.0f);
+
 			glViewport(0, 0, event.size.width, event.size.height);
 		}
 		else if (event.type == sf::Event::KeyPressed)
 		{
 			switch (event.key.code)
 			{
+			case sf::Keyboard::Escape:
+				running = false;
+				break;
+			case sf::Keyboard::Space:
+				if (event.key.control)
+					toggleFullScreen();
+				break;
 			case sf::Keyboard::Add:
 				time += 0.2f;
 				std::cout << "Time factor: " << std::fixed << std::setprecision(2) << time << std::endl;
@@ -167,9 +175,7 @@ void Engine::onDraw()
 
 void Engine::onExit()
 {
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
+	window.close();
 }
 
 void Engine::toggleWireframe()
@@ -187,5 +193,50 @@ void Engine::toggleAerial()
 	aerial = !aerial;
 
 	if(!aerial)
+	{ 
 		camera.create(vec3(0.0f, 2.0f, 0.0f));
+		glEnable(GL_CULL_FACE);
+	}
+	else
+	{
+		glDisable(GL_CULL_FACE);
+	}
+}
+
+void Engine::toggleFullScreen()
+{
+	fullscreen = !fullscreen;
+
+	sf::VideoMode videoMode;
+
+	window.close();
+
+	if (fullscreen)
+	{
+		auto modes = sf::VideoMode::getFullscreenModes();
+
+		if (modes.empty())
+		{ 
+			std::cerr << "Fullscreen not supported" << std::endl;
+			fullscreen = false;
+		}
+		
+		videoMode = modes[0];
+	}
+	else
+	{
+		videoMode = sf::VideoMode(DefaultWidth, DefaultHeight);
+	}
+
+	width = videoMode.width;
+	height = videoMode.height;
+
+	window.create(videoMode, WindowTitle, fullscreen ? sf::Style::Fullscreen : sf::Style::Default, settings);
+	window.setVerticalSyncEnabled(true);
+
+	glViewport(0, 0, width, height);
+	projection = glm::perspective(glm::radians(75.f), (float)width / (float)height, 0.1f, 1000.0f);
+
+	clock.restart();
+	atmosphere.create(200.f);
 }
