@@ -65,6 +65,7 @@ private:
 	bool fullscreen;
 	bool displayFps;
 	bool aerial;
+	bool vsync;
 };
 
 #endif

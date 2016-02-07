@@ -18,7 +18,7 @@
 #include "Utils.hpp"
 
 Engine::Engine()
-	: width(DefaultWidth), height(DefaultHeight), running(false), wireframe(false), time(1.0f), fullscreen(false), displayFps(false), aerial(false)
+	: width(DefaultWidth), height(DefaultHeight), running(false), wireframe(false), time(1.0f), fullscreen(false), displayFps(false), aerial(false), vsync(true)
 {
 }
 
@@ -117,6 +117,13 @@ void Engine::onUpdate()
 		{
 			switch (event.key.code)
 			{
+			case sf::Keyboard::V:
+				vsync = !vsync;
+				
+				window.setVerticalSyncEnabled(vsync);
+				std::cout << "Vsync " << (vsync ? "on" : "off") << std::endl;
+
+				break;
 			case sf::Keyboard::Escape:
 				running = false;
 				break;
@@ -233,6 +240,9 @@ void Engine::toggleFullScreen()
 
 	window.create(videoMode, WindowTitle, fullscreen ? sf::Style::Fullscreen : sf::Style::Default, settings);
 	window.setVerticalSyncEnabled(true);
+
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
 
 	glViewport(0, 0, width, height);
 	projection = glm::perspective(glm::radians(75.f), (float)width / (float)height, 0.1f, 1000.0f);
